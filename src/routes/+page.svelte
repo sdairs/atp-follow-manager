@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { BskyAgent } from '@atproto/api';
+	import BskyAgent from '@atproto/api';
 	import type { AtpSessionEvent, AtpSessionData } from '@atproto/api';
 	import { storageKeys } from '$lib/storage';
 
