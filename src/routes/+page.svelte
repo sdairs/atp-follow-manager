@@ -1,7 +1,6 @@
 <script lang="ts">
-	import { BskyAgent } from '@atproto/api';
-	import type { AtpSessionEvent, AtpSessionData } from '@atproto/api';
-	import { storageKeys } from '$lib/storage';
+	import { agent, login } from '$lib/atp/atp';
+	import { storageKeys } from '$lib/atp/storage';
 
 	import MultiSelectTable from '$lib/components/MultiSelectTable.svelte';
 	import FollowAllFollowers from '$lib/components/FollowAllFollowers.svelte';
@@ -9,27 +8,12 @@
 	import Followers from '$lib/components/Followers.svelte/Followers.svelte';
 	import Follows from '$lib/components/Follows.svelte/Follows.svelte';
 
-	const agent = new BskyAgent({
-		service: 'https://bsky.social',
-		persistSession: (e: AtpSessionEvent, session?: AtpSessionData) => {
-			switch (e) {
-				case 'create':
-				case 'update':
-					localStorage.setItem(storageKeys.session.$, JSON.stringify(session));
-					break;
-				case 'expired':
-				case 'create-failed':
-					localStorage.removeItem(storageKeys.session.$);
-					break;
-			}
-		}
-	});
-
 	let user: string = '';
 	let pass: string = '';
 
 	let follows: Array<any> = [];
 	async function getFollows() {
+		agent.resumeSession(JSON.parse(localStorage.getItem(storageKeys.session.$)!));
 		const profile = await agent.getFollows({ actor: user });
 		// follows.push(...profile.data.follows);
 		follows = profile.data.follows;
@@ -37,11 +21,8 @@
 
 	let followers: Array<any> = [];
 
-	async function load() {
-		await agent.login({
-			identifier: user,
-			password: pass
-		});
+	async function save() {
+		login(user, pass);
 		getFollows();
 	}
 </script>
@@ -65,7 +46,7 @@
 		/>
 	</div>
 	<div class="grid grid-cols-1 mt-4">
-		<button class="btn btn-success" on:click={load}>load</button>
+		<button class="btn btn-success" on:click={save}>load</button>
 	</div>
 	<!-- <div class="mt-4">
 		<h2>Personal controls</h2>

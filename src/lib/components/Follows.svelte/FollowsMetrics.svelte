@@ -12,7 +12,7 @@
 
 <div class="mt-4">
 	<div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-2">
-		<p>Total followers: {follows.length}</p>
+		<p>Total follows: {follows.length}</p>
 		<p>Total mutual: {count_mutual}</p>
 		<p>Percent mutual: {pct_mutual}%</p>
 	</div>
